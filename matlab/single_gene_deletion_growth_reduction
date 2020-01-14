@@ -1,0 +1,42 @@
+clear model; 
+model = merged_model_LB; 
+%model = addReaction(model, 'co_growth_biomass', '1 biomass[c_etec] + 1 biomass[c_vch] -> biomass_co_growth[e]');
+%model = addSinkReactions (model, {'biomass_co_growth[e]'}, -10, 10); 
+model = changeObjective(model, model.rxns, 0); model = changeObjective(model, 'co_growth_biomass', 1); sol_wt = optimizeCbModel (model, 'max');
+[model,hasEffect,constrRxnNames,deletedGenes] = deleteModelGenes(model,{'VC2427'});
+model = removeRxns(model, constrRxnNames);
+model = changeObjective(model, model.rxns, 0); model = changeObjective(model, 'co_growth_biomass', 1); sol_ko = optimizeCbModel (model, 'max');
+sol_wt
+sol_ko
+%formula for gorwth reduction
+100-((sol_ko.f/sol_wt.f)*100) % growth reduction percent
+
+
+clear model;
+load iAM_Vc953;  
+model = iAM_Vc953;
+%model = changeRxnBounds(model, 'EX_o2(e)', -20, 'l'); model = changeRxnBounds(model, 'EX_o2(e)', 1000, 'u'); 
+model = changeObjective(model, model.rxns, 0); model = changeObjective(model, 'biomass', 1); sol_wt = optimizeCbModel (model, 'max');
+[model,hasEffect,constrRxnNames,deletedGenes] = deleteModelGenes(model,{'VC2471'});
+model = removeRxns(model, constrRxnNames);
+model = changeObjective(model, model.rxns, 0); model = changeObjective(model, 'biomass', 1); sol_ko = optimizeCbModel (model, 'max');
+sol_wt
+sol_ko
+%formula for gorwth reduction
+100-((sol_ko.f/sol_wt.f)*100) % growth reduction percent
+constrRxnNames
+
+etec_rxns = {'etec_SUCDi'}
+
+% delete V.cholerae genes and remove ortholgous ETEC reactions
+%load merged_model; 
+model  = merged_model; 
+model = changeObjective (model, model.rxns, 0); model = changeObjective(model, 'co_growth_biomass', 1); sol_wt = optimizeCbModel (model, 'max');
+[model,hasEffect,constrRxnNames,deletedGenes] = deleteModelGenes(model,{'VC2090'});
+model = removeRxns(model, constrRxnNames);
+model = changeRxnBounds(model, etec_rxns, 0, 'l'); model = changeRxnBounds(model,etec_rxns , 0, 'u'); 
+model = changeObjective(model, model.rxns, 0); model = changeObjective(model, 'co_growth_biomass', 1); sol_ko = optimizeCbModel (model, 'max');
+sol_wt
+sol_ko
+%formula for gorwth reduction
+100-((sol_ko.f/sol_wt.f)*100) % growth reduction percent
