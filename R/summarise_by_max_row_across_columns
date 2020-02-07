@@ -1,0 +1,7 @@
+library (dplyr)
+library (magrittr)
+
+dat = dat%>%
+ group_by(genes)%>%
+ arrange_all()%>%
+ filter(row_number()==n())
